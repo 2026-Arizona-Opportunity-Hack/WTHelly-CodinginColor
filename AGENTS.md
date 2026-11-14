@@ -76,3 +76,21 @@ disappears. When planning, offer to write the issues.
 
 Keep `README.md` current as you go: what it does, how to run it, live link,
 demo link. The README is part of the submission.
+
+## Project: CIC Curriculum Platform
+
+Requirements with IDs: docs/requirements.md. Build plan, schema and routes: docs/mvp.md.
+
+Stack: Next.js App Router, TypeScript, Tailwind, shadcn/ui, Supabase (Postgres, Auth, RLS), Vercel.
+AI hints use the OHack AI gateway (OPENAI_BASE_URL, OPENAI_API_KEY), server-side only.
+
+- Students are minors: store only display_name, school, class, pin_hash. Never add student PII.
+- Every table has RLS; new tables get policies in a new file in supabase/migrations/.
+- Students never read activities/assessments directly: load server-side with the service role
+  and strip `answer` fields. Scoring happens in server routes only.
+- SUPABASE_SERVICE_ROLE_KEY and OPENAI_API_KEY are server-only.
+- Business rules (unlock, current module, stuck, learning gain) live only in lib/rules.ts and SQL views.
+- Accessibility: Lighthouse a11y >= 95, keyboard navigable, student pages work at 375px.
+- One requirement ID (or one build step) per PR; put the ID in the PR title and link its issue.
+- Never auto-create profiles on sign-up: anonymous students are in auth.users too.
+  Staff profiles are created only by admin invite.
