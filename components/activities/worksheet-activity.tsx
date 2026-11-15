@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import { PythonRunner } from "./python-runner";
 
 export type WorksheetQuestion =
   | {
@@ -166,6 +167,14 @@ export function WorksheetActivity({ content, initialAnswers, onChange }: Workshe
                       })}
                     </div>
                   </fieldset>
+                ) : question.kind === "code" ? (
+                  // The embedded runner renders the prompt itself, so it is not repeated here.
+                  <PythonRunner
+                    embedded
+                    prompt={question.prompt}
+                    code={typeof answers[question.id] === "string" ? (answers[question.id] as string) : ""}
+                    onChange={(code) => updateAnswer(question.id, code)}
+                  />
                 ) : (
                   <div className="min-w-0 space-y-3">
                     <label
@@ -184,27 +193,14 @@ export function WorksheetActivity({ content, initialAnswers, onChange }: Workshe
                         className="min-h-12 w-full min-w-0 rounded-xl border border-[#b98770] bg-[#fffefa] px-4 py-3 text-base text-[#382a26] placeholder:italic placeholder:text-[#9b8578] outline-none transition focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8]"
                       />
                     ) : (
-                      <>
-                        <textarea
-                          id={questionDomId}
-                          rows={question.kind === "code" ? 7 : 5}
-                          value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
-                          onChange={(event) => updateAnswer(question.id, event.target.value)}
-                          placeholder={question.kind === "code" ? "# Write your code here…" : "Type your reflection here…"}
-                          spellCheck={question.kind !== "code"}
-                          autoCapitalize={question.kind === "code" ? "off" : undefined}
-                          autoCorrect={question.kind === "code" ? "off" : undefined}
-                          aria-describedby={question.kind === "code" ? `${questionDomId}-hint` : undefined}
-                          className={`w-full min-w-0 resize-y rounded-xl border border-[#b98770] bg-[#fffefa] px-4 py-3 text-base leading-6 text-[#382a26] placeholder:italic placeholder:text-[#9b8578] outline-none transition focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8] ${
-                            question.kind === "code" ? "font-mono text-sm placeholder:not-italic" : ""
-                          }`}
-                        />
-                        {question.kind === "code" && (
-                          <p id={`${questionDomId}-hint`} className="text-xs leading-5 text-[#806b5e]">
-                            Python code entry only. It will not run in this worksheet.
-                          </p>
-                        )}
-                      </>
+                      <textarea
+                        id={questionDomId}
+                        rows={5}
+                        value={typeof answers[question.id] === "string" ? answers[question.id] : ""}
+                        onChange={(event) => updateAnswer(question.id, event.target.value)}
+                        placeholder="Type your reflection here…"
+                        className="w-full min-w-0 resize-y rounded-xl border border-[#b98770] bg-[#fffefa] px-4 py-3 text-base leading-6 text-[#382a26] placeholder:italic placeholder:text-[#9b8578] outline-none transition focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffdf8]"
+                      />
                     )}
                   </div>
                 )}
