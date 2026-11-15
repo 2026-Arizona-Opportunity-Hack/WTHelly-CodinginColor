@@ -65,6 +65,7 @@ async function Dashboard({ params }: Params) {
     <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">
       <div>
         <Link href="/instructor" className="rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring">← My classes</Link>
+        <Link href={`/instructor/classes/${classRow.id}/manage`} className="ml-4 rounded-sm text-sm font-medium underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-ring">Manage class</Link>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div><h1 className="text-3xl font-bold tracking-tight">{classRow.name}</h1><p className="mt-1 text-sm text-muted-foreground">{cohort ? `${cohort.name} · ${cohort.school} · ${cohort.term}` : "Class progress"}</p></div>
           <p className="rounded-lg border px-4 py-3 text-sm"><span className="text-muted-foreground">Class code</span><br /><strong className="text-lg tracking-widest">{classRow.join_code}</strong></p>
