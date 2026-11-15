@@ -1,0 +1,16 @@
+import { apiError, apiJson, getDateFilters, requireApiKey } from "@/lib/api/request";
+import { getCohortReport } from "@/lib/api/reports";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(request: Request) {
+  try {
+    const auth = await requireApiKey(request);
+    if ("error" in auth) return auth.error;
+    const parsed = getDateFilters(new URL(request.url));
+    if ("error" in parsed) return apiError(parsed.error, 400);
+    return apiJson({ cohorts: await getCohortReport(parsed.filters) });
+  } catch {
+    return apiError("The report could not be loaded.", 500);
+  }
+}
