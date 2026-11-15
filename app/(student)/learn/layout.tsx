@@ -34,9 +34,9 @@ async function GatedLearn({ children }: { children: ReactNode }) {
 
 function HeaderShell({ children }: { children?: ReactNode }) {
   return (
-    <header className="border-b border-border">
+    <header className="border-b border-border bg-card shadow-sm">
       <div className="mx-auto flex min-h-14 w-full max-w-3xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-2">
-        <span className="font-semibold tracking-tight">Coding in Color</span>
+        <span className="font-heading text-lg font-semibold tracking-tight text-primary">Coding in Color</span>
         <div className="flex min-w-0 flex-wrap items-center gap-3">{children}</div>
       </div>
     </header>

@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export default function PythonRunnerDemoPage() {
   return (
-    <main id="main" className="min-h-screen bg-[#f3e6d4] px-4 py-8 text-[#382a26] sm:px-8 sm:py-12">
+    <main id="main" className="min-h-screen bg-background px-4 py-8 text-foreground sm:px-8 sm:py-12">
       <div className="mx-auto mb-6 max-w-4xl">
-        <Link className="text-sm font-semibold text-[#64252e] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#752a32]" href="/">
+        <Link className="text-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" href="/">
           ← Back to Coding in Color
         </Link>
       </div>

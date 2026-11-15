@@ -55,7 +55,7 @@ export function TestForm({
 
   if (result) {
     return (
-      <section aria-labelledby="test-result" className="mt-8 rounded-xl border border-border p-6">
+      <section aria-labelledby="test-result" className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm">
         <h2 id="test-result" ref={resultRef} tabIndex={-1} className="text-xl font-semibold outline-none">
           Test submitted
         </h2>
@@ -71,13 +71,13 @@ export function TestForm({
 
   return (
     <form onSubmit={onSubmit} noValidate aria-describedby={error ? "test-form-error" : undefined} className="mt-8 flex flex-col gap-8">
-      <ol className="flex flex-col gap-8">
+      <ol className="flex flex-col gap-5">
         {questions.map((q, qi) => (
-          <li key={q.id}>
+          <li key={q.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
             <fieldset className="flex min-w-0 flex-col gap-3">
               <legend className="mb-3 font-medium">
-                <span className="text-muted-foreground">Question {qi + 1} of {questions.length}</span>
-                <span className="mt-1 block whitespace-pre-wrap break-words text-base">{q.prompt}</span>
+                <span className="text-sm font-semibold text-muted-foreground">Question {qi + 1} of {questions.length}</span>
+                <span className="mt-1 block whitespace-pre-wrap break-words font-heading text-lg text-foreground">{q.prompt}</span>
               </legend>
               {q.options.map((opt, oi) => {
                 const id = `q-${q.id}-${oi}`;
@@ -85,7 +85,7 @@ export function TestForm({
                   <label
                     key={id}
                     htmlFor={id}
-                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2 has-checked:border-primary has-checked:bg-muted has-focus-visible:ring-3 has-focus-visible:ring-ring"
+                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-border bg-surface-raised px-4 py-2 has-checked:border-primary has-checked:bg-accent has-focus-visible:ring-3 has-focus-visible:ring-ring"
                   >
                     <input
                       id={id}

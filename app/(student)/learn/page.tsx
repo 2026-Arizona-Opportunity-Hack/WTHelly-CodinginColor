@@ -52,7 +52,7 @@ async function Modules() {
 
   return (
     <>
-      <section aria-labelledby="up-next" className="mt-8 rounded-xl border border-border bg-card p-5 sm:p-6">
+      <section aria-labelledby="up-next" className="mt-8 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
         <h2 id="up-next" className="text-sm font-medium text-muted-foreground">
           {current ? "Up next" : "All done"}
         </h2>
@@ -86,7 +86,7 @@ function ModuleRow({ m }: { m: StudentModule }) {
   const required = m.activities.filter(mustDo);
   const done = required.filter((a) => m.submitted.has(a.id)).length;
   return (
-    <li className="rounded-xl border border-border p-4">
+    <li className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">Module {m.index + 1}</p>

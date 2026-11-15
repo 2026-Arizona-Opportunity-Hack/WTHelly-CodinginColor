@@ -19,14 +19,14 @@ export function ActionMessage({
     <div ref={ref} tabIndex={-1} className="outline-none">
       <div role="status" aria-live="polite">
         {result?.ok && (
-          <p id={id} className="rounded-lg border border-border bg-muted px-4 py-3 text-sm font-medium">
+          <p id={id} className="rounded-xl border border-border bg-success-surface px-4 py-3 text-sm font-medium text-success">
             {result.message}
           </p>
         )}
       </div>
       <div role="alert">
         {result && !result.ok && (
-          <p id={id} className="text-sm font-medium text-destructive">
+          <p id={id} className="rounded-xl border border-destructive/40 bg-error-surface px-4 py-3 text-sm font-medium text-destructive">
             {result.message}
           </p>
         )}
@@ -36,4 +36,4 @@ export function ActionMessage({
 }
 
 export const inputClass =
-  "h-10 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
+  "h-10 w-full rounded-xl border border-input bg-surface-raised px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";

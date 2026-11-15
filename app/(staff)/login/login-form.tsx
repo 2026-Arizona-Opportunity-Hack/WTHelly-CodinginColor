@@ -27,7 +27,7 @@ export function LoginForm() {
           key={state.email}
           aria-invalid={hasError || undefined}
           aria-describedby={hasError ? "email-error" : undefined}
-          className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
+          className="h-11 w-full rounded-xl border border-input bg-surface-raised px-3 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
         />
         {hasError && (
           <p id="email-error" role="alert" className="text-sm font-medium text-destructive">

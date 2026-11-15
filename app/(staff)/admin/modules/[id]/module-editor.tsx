@@ -23,7 +23,7 @@ type Activity = ModulePayload["activities"][number];
 
 const textareaClass = inputClass.replace("h-10", "min-h-20 py-2");
 const labelClass = "block text-sm font-medium";
-const sectionClass = "space-y-4 rounded-xl border p-4 sm:p-6";
+const sectionClass = "space-y-4 rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6";
 const ModuleSaveErrorContext = createContext(false);
 
 const KIND_LABEL: Record<WorksheetQuestion["kind"], string> = {
@@ -200,7 +200,7 @@ export function ModuleEditor({
         onChange={(posttest) => update({ posttest })}
       />
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t bg-background px-4 py-3">
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t bg-card px-4 py-3 shadow-sm">
         <Button type="button" size="lg" disabled={pending} aria-describedby={result && !result.ok ? "module-save-error" : undefined} onClick={() => submit("save")}>
           {pending ? "Saving…" : "Save"}
         </Button>

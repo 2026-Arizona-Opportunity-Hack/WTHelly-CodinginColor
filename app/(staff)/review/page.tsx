@@ -53,7 +53,7 @@ async function Modules() {
         const moduleActivities = activities.filter((activity) => activity.lessons.module_id === module.id);
         const test = tests.get(module.id) ?? { pre: [], post: [] };
         return (
-          <li key={module.id} className="rounded-xl border">
+          <li key={module.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <details>
               <summary className="cursor-pointer list-inside rounded-xl p-4 focus-visible:outline-2 focus-visible:outline-ring">
                 <h2 className="inline text-lg font-semibold">{module.title}</h2>
