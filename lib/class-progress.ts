@@ -59,7 +59,6 @@ export function getStudentProgress(
   const completedModules = new Set(modules.filter((module) => isModuleComplete(module, submissions, assessments, studentId)).map((module) => module.id));
 
   const currentModule = modules.find((module) => !completedModules.has(module.id));
-  const reportModule = currentModule ?? modules.at(-1);
   const currentModuleSubmissions = currentModule
     ? studentSubmissions.filter((row) => currentModule.requiredActivityIds.includes(row.activity_id))
     : [];
@@ -68,7 +67,13 @@ export function getStudentProgress(
     (latest, timestamp) => !latest || timestamp > latest ? timestamp : latest,
     null,
   );
-  const scores = reportModule ? studentAssessments.filter((row) => row.module_id === reportModule.id) : [];
+  // Scores come from the latest module (in assignment order) with a post-test, so a student who
+  // finished module 1 and moved on still shows that gain; before any post-test, show the
+  // current module's pretest.
+  const scoresModule = modules.findLast((module) =>
+    studentAssessments.some((row) => row.module_id === module.id && row.kind === "post"),
+  ) ?? currentModule ?? null;
+  const scores = scoresModule ? studentAssessments.filter((row) => row.module_id === scoresModule.id) : [];
   const pre = scores.find((row) => row.kind === "pre")?.score ?? null;
   const post = scores.find((row) => row.kind === "post")?.score ?? null;
   const currentTests = currentModule ? studentAssessments.filter((row) => row.module_id === currentModule.id) : [];
@@ -78,6 +83,7 @@ export function getStudentProgress(
     completionPct: currentModule
       ? Math.round(((currentModuleSubmissions.length + currentTests.length) / (currentModule.requiredActivityIds.length + 2)) * 100)
       : 100,
+    scoresModule,
     pre,
     post,
     gain: pre !== null && post !== null ? Math.round((post - pre) * 10) / 10 : null,
