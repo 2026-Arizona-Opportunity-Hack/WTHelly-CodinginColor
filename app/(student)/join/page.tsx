@@ -9,7 +9,7 @@ type Props = { searchParams: Promise<{ code?: string | string[] }> };
 
 export default function JoinPage({ searchParams }: Props) {
   return (
-    <main id="main" className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-4 py-10">
+    <main id="main" className="mx-auto my-auto flex w-[calc(100%_-_2rem)] max-w-md flex-none flex-col justify-center gap-8 rounded-3xl border border-border bg-card px-5 py-10 shadow-lg sm:px-8">
       {/* searchParams is request-time data, so under cacheComponents it's read inside <Suspense>. */}
       <Suspense fallback={<h1 className="text-2xl font-semibold tracking-tight">Join your class</h1>}>
         <JoinFormWithCode searchParams={searchParams} />

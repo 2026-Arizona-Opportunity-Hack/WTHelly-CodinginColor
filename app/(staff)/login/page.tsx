@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Staff sign in · Coding in Color" };
 
 export default function LoginPage() {
   return (
-    <main id="main" className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-12">
+    <main id="main" className="mx-auto my-auto flex w-[calc(100%_-_2rem)] max-w-md flex-none flex-col justify-center gap-6 rounded-3xl border border-border bg-card px-5 py-12 shadow-lg sm:px-8">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Staff sign in</h1>
         <p className="mt-2 text-muted-foreground">

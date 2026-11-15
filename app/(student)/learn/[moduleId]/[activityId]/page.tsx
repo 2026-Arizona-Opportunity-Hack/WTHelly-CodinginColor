@@ -9,7 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 type Params = Promise<{ moduleId: string; activityId: string }>;
 
 export default function ActivityPage({ params }: { params: Params }) {
-  return <main id="main" className="w-full flex-1 bg-[#f3e6d4] px-4 py-8"><Suspense fallback={<p className="mx-auto max-w-4xl text-[#5d2028]">Loading activity…</p>}><ActivityContent params={params} /></Suspense></main>;
+  return <main id="main" className="w-full flex-1 bg-background px-4 py-8"><Suspense fallback={<p className="mx-auto max-w-4xl text-primary">Loading activity…</p>}><ActivityContent params={params} /></Suspense></main>;
 }
 
 async function ActivityContent({ params }: { params: Params }) {
