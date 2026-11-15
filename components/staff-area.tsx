@@ -67,6 +67,11 @@ function StaffHeader({ profile, email }: { profile: StaffProfile; email: string 
             Admin
           </Link>
         )}
+        {isAdmin && (
+          <Link href="/admin/modules" className={linkClass}>
+            Modules
+          </Link>
+        )}
         {(isAdmin || profile.role === "reviewer") && (
           <Link href="/review" className={linkClass}>
             Review
