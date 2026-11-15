@@ -105,6 +105,10 @@ Staff sign in at `/login` with a magic link. Only emails that already exist in S
 
 After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewers on `/review`. A signed-in user without a profile, or with the wrong role for a page, gets the "no access" page with HTTP 403 (`proxy.ts` checks first, then each staff layout checks again on the server).
 
+### Python runner demo
+
+After starting `npm run dev`, open [http://localhost:3000/demo/python-runner](http://localhost:3000/demo/python-runner) and press **Run code**. The starter prints `1`, `2`, `3`. Pyodide loads from jsDelivr on the first run, so the browser needs internet access. Stop, reset, test grading and student submissions are not implemented yet.
+
 ## How we work (team rules)
 
 **Branches**
