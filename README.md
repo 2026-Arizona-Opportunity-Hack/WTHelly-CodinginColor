@@ -55,6 +55,8 @@ The student activity route loads permitted activity content on the server, strip
 
 Preview the player locally at `/demo/activity-player` after `npm run dev`. Choose a video, check, worksheet or exit screen; this preview does not submit.
 
+The instructor home at `/instructor` reads the signed-in instructor's classes and available cohorts. Its create-class form validates the class name and cohort selection; persistence awaits the separate CLS-1 backend contract. Until connected, the page reports that creation is unavailable and does not claim to save a class.
+
 - Requirements with IDs and acceptance criteria: [`docs/requirements.md`](docs/requirements.md)
 - Build plan, database schema and routes: [`docs/mvp.md`](docs/mvp.md)
 - Rules for AI coding tools: [`AGENTS.md`](AGENTS.md)
