@@ -5,7 +5,8 @@ import { isStaffRole, rolesForPath } from "@/lib/auth/roles";
 // Next.js 16 "proxy" (formerly middleware). Runs before every page request:
 // 1. refreshes the Supabase session cookie so Server Components see a fresh token;
 // 2. for /admin, /instructor and /review, checks the role (AUTH-5):
-//    not signed in → redirect to /login; wrong or no role → HTTP 403.
+//    not signed in → redirect to /login; wrong or no role → HTTP 403;
+// 3. for /learn, requires a user linked to a student, else redirects to /join.
 // The layouts check again on the server (lib/auth/session.ts), and RLS guards the data.
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -37,7 +38,19 @@ export async function proxy(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const userId = data?.claims?.sub;
 
-  const allowed = rolesForPath(request.nextUrl.pathname);
+  const { pathname } = request.nextUrl;
+
+  // Student area: needs a signed-in user linked to a student (student_devices).
+  // current_student_id() only ever returns the caller's own student.
+  if (pathname === "/learn" || pathname.startsWith("/learn/")) {
+    const studentId = userId ? (await supabase.rpc("current_student_id")).data : null;
+    if (!studentId) {
+      return withCookies(NextResponse.redirect(new URL("/join", request.url)), response);
+    }
+    return response;
+  }
+
+  const allowed = rolesForPath(pathname);
   if (!allowed) return response;
 
   if (!userId) {
