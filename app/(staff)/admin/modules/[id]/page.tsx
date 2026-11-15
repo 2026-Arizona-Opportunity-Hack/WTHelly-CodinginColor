@@ -15,7 +15,7 @@ type Props = {
 
 export default function EditModulePage(props: Props) {
   return (
-    <Suspense fallback={<main className="mx-auto max-w-5xl p-6">Loading module…</main>}>
+    <Suspense fallback={<main id="main" className="mx-auto max-w-5xl p-6">Loading module…</main>}>
       <Editor {...props} />
     </Suspense>
   );
@@ -74,11 +74,11 @@ async function Editor({ params, searchParams }: Props) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-8 pb-28">
+    <main id="main" className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-8 pb-28">
       <p>
         <Link
           href="/admin/modules"
-          className="rounded-sm text-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-sm text-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring"
         >
           ← All modules
         </Link>

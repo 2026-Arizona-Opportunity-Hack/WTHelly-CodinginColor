@@ -16,7 +16,7 @@ type Props = {
 
 export default function ManageClassPage(props: Props) {
   return (
-    <Suspense fallback={<main className="mx-auto max-w-5xl p-6">Loading class…</main>}>
+    <Suspense fallback={<main id="main" className="mx-auto max-w-5xl p-6">Loading class…</main>}>
       <Manage {...props} />
     </Suspense>
   );
@@ -65,11 +65,11 @@ async function Manage({ params, searchParams }: Props) {
     .map((m) => ({ id: m.id, title: m.title }));
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-8">
+    <main id="main" className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-8">
       <div>
         <Link
           href={`/instructor/classes/${id}`}
-          className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring"
         >
           ← Class dashboard
         </Link>

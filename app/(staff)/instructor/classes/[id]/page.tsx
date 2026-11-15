@@ -9,7 +9,7 @@ import { getModuleCompletionPct, getOverallCompletionPct, getStudentProgress, ty
 type Params = { params: Promise<{ id: string }> };
 
 export default function ClassDashboardPage({ params }: Params) {
-  return <Suspense fallback={<main className="mx-auto max-w-6xl p-6">Loading class…</main>}><Dashboard params={params} /></Suspense>;
+  return <Suspense fallback={<main id="main" className="mx-auto max-w-6xl p-6">Loading class…</main>}><Dashboard params={params} /></Suspense>;
 }
 
 async function Dashboard({ params }: Params) {
@@ -63,7 +63,7 @@ async function Dashboard({ params }: Params) {
   const completion = getOverallCompletionPct(modules, studentRows, submissions, progressAssessments);
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">
+    <main id="main" className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-6">
       <div>
         <Link href="/instructor" className="rounded-sm text-sm text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-ring">{profile.role === "admin" ? "← Classes" : "← My classes"}</Link>
         <Link href={`/instructor/classes/${classRow.id}/manage`} className="ml-4 rounded-sm text-sm font-medium underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-ring">Manage class</Link>
@@ -88,7 +88,7 @@ async function Dashboard({ params }: Params) {
       <section aria-labelledby="roster-heading" className="space-y-3">
         <div><h2 id="roster-heading" className="text-xl font-semibold">Student progress</h2><p className="text-sm text-muted-foreground">Learning gain is post-test minus pretest, in percentage points.</p></div>
         <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full min-w-[850px] text-left text-sm">
+          <table aria-label="Student progress by activity and assessment" className="w-full min-w-[850px] text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground"><tr>{["Student", "Current module", "Complete", "Pre", "Post", "Gain", "Last active"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-medium">{heading}</th>)}</tr></thead>
             <tbody className="divide-y">
               {roster.map((student) => <tr key={student.id}>

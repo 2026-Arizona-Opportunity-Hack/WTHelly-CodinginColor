@@ -20,7 +20,7 @@ type Step =
   | { step: "pin"; cls: FoundClass; student: RosterStudent };
 
 const inputClass =
-  "h-12 w-full rounded-lg border border-input bg-background px-3 text-lg outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
+  "h-12 w-full rounded-lg border border-input bg-background px-3 text-lg outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20";
 const headingClass = "text-2xl font-semibold tracking-tight outline-none";
 
 /** AUTH-2 / AUTH-3: class code → pick your name → set or enter your PIN. */

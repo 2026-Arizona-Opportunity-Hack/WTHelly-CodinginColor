@@ -29,11 +29,11 @@ export function CreateKeyForm() {
       <form action={action} className="flex flex-wrap items-end gap-3">
         <div className="min-w-56 flex-1 space-y-1">
           <label htmlFor="key-label" className="text-sm font-medium">Key label</label>
-          <input id="key-label" name="label" required maxLength={80} className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50" placeholder="CIC organization dashboard" />
+          <input id="key-label" name="label" required maxLength={80} aria-describedby={state.message && !state.ok ? "create-key-error" : undefined} className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring" placeholder="CIC organization dashboard" />
         </div>
         <Button type="submit" disabled={pending}>{pending ? "Creating…" : "Create key"}</Button>
       </form>
-      {state.message && !state.key && <p role={state.ok ? "status" : "alert"} className="text-sm">{state.message}</p>}
+      {state.message && !state.key && <p id="create-key-error" role={state.ok ? "status" : "alert"} className="text-sm">{state.message}</p>}
       {state.key && <div role="status" className="space-y-3 rounded-lg border border-primary/40 bg-muted/40 p-4">
         <p className="font-medium">Your key is ready. Copy it now; you won’t see it again.</p>
         <div className="flex flex-wrap items-center gap-2">

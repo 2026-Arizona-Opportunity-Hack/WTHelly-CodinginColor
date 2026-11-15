@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export default function ReviewPage() {
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-8 sm:px-6">
+    <main id="main" className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-8 sm:px-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Published modules</h1>
         <p className="mt-1 text-sm text-muted-foreground">Read-only view of the curriculum. Expand a module to see its activities and test questions.</p>

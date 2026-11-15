@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "No access · Coding in Color" };
 // their role doesn't allow, or has no staff profile at all.
 export default function NoAccessPage() {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-12">
+    <main id="main" className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-12">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">You don&apos;t have access to this page</h1>
         <p className="mt-2 text-muted-foreground">
@@ -20,7 +20,7 @@ export default function NoAccessPage() {
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href="/learn"
-          className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="inline-flex h-9 items-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring"
         >
           Go to my class
         </Link>

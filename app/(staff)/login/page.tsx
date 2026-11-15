@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Staff sign in · Coding in Color" };
 
 export default function LoginPage() {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-12">
+    <main id="main" className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 px-4 py-12">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Staff sign in</h1>
         <p className="mt-2 text-muted-foreground">
@@ -16,7 +16,7 @@ export default function LoginPage() {
           sign-in link. Students,{" "}
           <Link
             href="/join"
-            className="underline underline-offset-4 outline-none focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="underline underline-offset-4 outline-none focus-visible:rounded-sm focus-visible:ring-3 focus-visible:ring-ring"
           >
             join your class here
           </Link>

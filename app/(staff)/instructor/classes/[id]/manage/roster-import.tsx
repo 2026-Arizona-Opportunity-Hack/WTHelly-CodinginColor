@@ -84,7 +84,7 @@ export function RosterImport({ classId, existingNames }: { classId: string; exis
           <a
             href={SAMPLE_CSV}
             download="roster-sample.csv"
-            className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="rounded-sm underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring"
           >
             Download a sample CSV
           </a>
@@ -95,12 +95,12 @@ export function RosterImport({ classId, existingNames }: { classId: string; exis
           type="file"
           accept=".csv,text/csv"
           onChange={onFile}
-          aria-describedby="roster-hint"
+          aria-describedby={result ? "roster-hint roster-message" : "roster-hint"}
           className="block w-full max-w-md text-sm file:mr-3 file:h-10 file:rounded-lg file:border file:border-border file:bg-background file:px-3 file:font-medium focus-visible:outline-2 focus-visible:outline-ring"
         />
       </div>
 
-      <ActionMessage result={result} />
+      <ActionMessage result={result} id="roster-message" />
 
       {rows && (
         <div className="space-y-3">
@@ -144,13 +144,14 @@ export function RosterImport({ classId, existingNames }: { classId: string; exis
               type="button"
               onClick={confirm}
               disabled={pending || !valid.length}
+              aria-describedby={result ? "roster-message" : undefined}
               className="h-10 px-4 text-base"
             >
               {pending
                 ? "Importing…"
                 : `Import ${valid.length} student${valid.length === 1 ? "" : "s"}`}
             </Button>
-            <Button type="button" variant="outline" onClick={reset} disabled={pending} className="h-10 px-4">
+            <Button type="button" variant="outline" onClick={reset} disabled={pending} aria-describedby={result ? "roster-message" : undefined} className="h-10 px-4">
               Cancel
             </Button>
           </div>

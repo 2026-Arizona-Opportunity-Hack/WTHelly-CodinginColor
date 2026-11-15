@@ -4,11 +4,11 @@ import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getOverallCompletionPct, getStudentProgress, type ProgressAssessment, type ProgressModule, type ProgressSubmission } from "@/lib/class-progress";
 
-const linkClass = "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+const linkClass = "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring";
 
 export default function AdminPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-4 py-8 sm:px-6">
+    <main id="main" className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-4 py-8 sm:px-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
         <nav aria-label="Admin quick links" className="mt-3 flex flex-wrap gap-3">
@@ -99,7 +99,7 @@ async function AllClasses() {
           <p className="text-sm text-muted-foreground">Learning gain is post-test minus pretest, in percentage points, averaged over students with both tests.</p>
         </div>
         <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full min-w-[900px] text-left text-sm">
+          <table aria-label="Classes across all cohorts" className="w-full min-w-[900px] text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 {["Class", "Instructor", "Cohort", "School", "Program", "Students", "Completion", "Avg gain", "Both tests", "Setup"].map((heading) => (
