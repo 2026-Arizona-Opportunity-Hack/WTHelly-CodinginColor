@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: Coding in Color Read API
+  version: 1.0.0
+  description: Read-only aggregate progress reports for CIC. Responses never contain student-level rows.
+servers:
+  - url: https://wthelly-codingincolor.vercel.app
+  - url: http://localhost:3000
+security:
+  - bearerAuth: []
+paths:
+  /api/v1/cohorts:
+    get:
+      summary: Get cohort aggregates
+      operationId: getCohorts
+      parameters:
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+      responses:
+        '200':
+          description: Aggregate metrics for each cohort
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [cohorts]
+                properties:
+                  cohorts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cohort'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/classes/{id}/summary:
+    get:
+      summary: Get aggregate module metrics for a class
+      operationId: getClassSummary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+      responses:
+        '200':
+          description: Aggregate metrics for assigned modules
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [class_id, modules]
+                properties:
+                  class_id:
+                    type: string
+                    format: uuid
+                  modules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClassModule'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Class not found
+  /api/v1/programs:
+    get:
+      summary: Get program totals
+      operationId: getPrograms
+      parameters:
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+      responses:
+        '200':
+          description: Aggregate metrics for each program
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [programs]
+                properties:
+                  programs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Program'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: CIC API key
+  parameters:
+    from:
+      name: from
+      in: query
+      required: false
+      description: Inclusive UTC start date for submissions and test results.
+      schema:
+        type: string
+        format: date
+    to:
+      name: to
+      in: query
+      required: false
+      description: Inclusive UTC end date for submissions and test results.
+      schema:
+        type: string
+        format: date
+  responses:
+    BadRequest:
+      description: Invalid date filter or class ID
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing, unknown or revoked API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    Metrics:
+      type: object
+      properties:
+        avg_pre:
+          type: [number, 'null']
+        avg_post:
+          type: [number, 'null']
+        avg_gain:
+          type: [number, 'null']
+    Cohort:
+      allOf:
+        - $ref: '#/components/schemas/Metrics'
+        - type: object
+          required: [id, name, program, school, term, students, completion_pct, students_with_both_tests]
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+            program:
+              type: string
+            school:
+              type: string
+            term:
+              type: string
+            students:
+              type: integer
+            completion_pct:
+              type: number
+            students_with_both_tests:
+              type: integer
+    ClassModule:
+      allOf:
+        - $ref: '#/components/schemas/Metrics'
+        - type: object
+          required: [module_id, title, completion_pct, stuck_count]
+          properties:
+            module_id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            completion_pct:
+              type: number
+            stuck_count:
+              type: integer
+    Program:
+      allOf:
+        - $ref: '#/components/schemas/Metrics'
+        - type: object
+          required: [program, cohorts, classes, students, completion_pct, students_with_both_tests]
+          properties:
+            program:
+              type: string
+            cohorts:
+              type: integer
+            classes:
+              type: integer
+            students:
+              type: integer
+            completion_pct:
+              type: number
+            students_with_both_tests:
+              type: integer

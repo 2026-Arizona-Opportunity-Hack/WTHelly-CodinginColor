@@ -59,12 +59,17 @@ function StaffHeader({ profile, email }: { profile: StaffProfile; email: string 
       <nav aria-label="Staff" className="flex flex-wrap items-center gap-1">
         {(isAdmin || profile.role === "instructor") && (
           <Link href="/instructor" className={linkClass}>
-            My classes
+            {isAdmin ? "Classes" : "My classes"}
           </Link>
         )}
         {isAdmin && (
           <Link href="/admin" className={linkClass}>
             Admin
+          </Link>
+        )}
+        {isAdmin && (
+          <Link href="/admin/modules" className={linkClass}>
+            Modules
           </Link>
         )}
         {(isAdmin || profile.role === "reviewer") && (

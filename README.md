@@ -51,6 +51,14 @@ Judges score **Scope, Documentation, Polish and Security**, plus a separate **Ac
 
 A link-based curriculum platform for Coding in Color: the platform teaches and the instructor manages. Instructors set up a class and assign modules in minutes; students (no email needed) work through modules with videos, checks, worksheets and pre/post tests; CIC sees completion and **learning gain** per student, class and cohort, and its org dashboard can read the numbers through a key-authenticated API.
 
+The student activity route loads permitted activity content on the server, strips answer keys, and uses `components/activities/activity-player.tsx` to post answers to `/api/submissions`. Next opens the server's `nextHref` only after a confirmed save. Worksheet rendering awaits the Step 5 merge.
+
+### Read API
+
+CIC's dashboard can read aggregate cohort, class and program progress through the bearer-key API. Admins manage keys at `/admin/api-keys`. See [`docs/api.md`](docs/api.md) for endpoints, date filters, response examples and curl commands; the OpenAPI definition is [`docs/openapi.yaml`](docs/openapi.yaml).
+
+Preview the player locally at `/demo/activity-player` after `npm run dev`. Choose a video, check, worksheet or exit screen; this preview does not submit.
+
 - Requirements with IDs and acceptance criteria: [`docs/requirements.md`](docs/requirements.md)
 - Build plan, database schema and routes: [`docs/mvp.md`](docs/mvp.md)
 - Rules for AI coding tools: [`AGENTS.md`](AGENTS.md)
@@ -107,7 +115,11 @@ After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewe
 
 ### Python runner demo
 
-After starting `npm run dev`, open [http://localhost:3000/demo/python-runner](http://localhost:3000/demo/python-runner) and press **Run code**. The starter prints `1`, `2`, `3`. Pyodide loads from jsDelivr on the first run, so the browser needs internet access. Stop, reset, test grading and student submissions are not implemented yet.
+After starting `npm run dev`, open [http://localhost:3000/demo/python-runner](http://localhost:3000/demo/python-runner) and press **Run code**. The starter prints `1`, `2`, `3`. Pyodide loads from jsDelivr on the first run, so the browser needs internet access. Stop, reset and a five-second timeout are available. Test grading and student submissions are not implemented yet.
+
+### Digital worksheets demo
+
+After starting `npm run dev`, open [http://localhost:3000/demo/worksheets](http://localhost:3000/demo/worksheets) and try the multiple-choice, short-answer, long-answer and code-entry questions. The live answer preview shows the data received through `onChange`; answers are not saved or submitted.
 
 ## How we work (team rules)
 
