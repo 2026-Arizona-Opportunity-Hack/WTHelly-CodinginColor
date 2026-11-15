@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getManagedClass, idSchema, type ManagedClass } from "@/lib/class-setup/access";
+import { getManagedClass, idSchema, isAssignableInstructor, type ManagedClass } from "@/lib/class-setup/access";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   checkRoster,
@@ -246,4 +246,22 @@ export async function moveModule(
   }
   refresh();
   return { ok: true, message: `Moved to position ${to + 1}.` };
+}
+
+/** Admins only: hand the class to another instructor or admin. */
+export async function changeInstructor(classId: string, instructorId: string): Promise<ActionResult> {
+  const access = await getManagedClass(classId);
+  if (!access || access.role !== "admin") return { ok: false, message: "Only admins can change a class's instructor." };
+  if (instructorId === access.cls.instructor_id) return { ok: true, message: "That instructor already teaches this class." };
+  if (!(await isAssignableInstructor(access.supabase, instructorId))) {
+    return { ok: false, message: "Pick an instructor from the list." };
+  }
+  const { error } = await access.supabase.from("classes").update({ instructor_id: instructorId }).eq("id", classId);
+  if (error) {
+    console.error("changeInstructor failed", error.code);
+    return FAILED;
+  }
+  refresh();
+  revalidatePath("/admin");
+  return { ok: true, message: "Instructor changed." };
 }

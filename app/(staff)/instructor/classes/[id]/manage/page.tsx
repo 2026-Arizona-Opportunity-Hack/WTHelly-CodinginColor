@@ -2,11 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { connection } from "next/server";
-import { getManagedClass } from "@/lib/class-setup/access";
+import { getManagedClass, listInstructors } from "@/lib/class-setup/access";
 import { RosterImport } from "./roster-import";
 import { StudentList, type ManagedStudent } from "./student-list";
 import { ModuleAssignments, type ModuleOption } from "./module-assignments";
 import { JoinLink } from "./join-link";
+import { InstructorPicker } from "./instructor-picker";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -27,12 +28,12 @@ async function Manage({ params, searchParams }: Props) {
   // Role check + ownership: instructors their own classes, admins any.
   const access = await getManagedClass(id);
   if (!access) notFound();
-  const { supabase, cls } = access;
+  const { supabase, cls, role } = access;
 
   // Never select("*") on students: pin_hash isn't readable by this client.
-  const [{ data: cohortRow }, { data: students }, { data: assignments }, { data: modules }] =
+  const [{ data: cohortRow }, { data: students }, { data: assignments }, { data: modules }, instructors] =
     await Promise.all([
-      supabase.from("classes").select("cohorts(name, program, school, term)").eq("id", id).maybeSingle(),
+      supabase.from("classes").select("cohorts(name)").eq("id", id).maybeSingle(),
       supabase
         .from("students")
         .select("id, display_name, school, joined_at, pin_locked_until")
@@ -40,10 +41,11 @@ async function Manage({ params, searchParams }: Props) {
         .order("display_name"),
       supabase.from("assignments").select("module_id, position").eq("class_id", id).order("position"),
       supabase.from("modules").select("id, title").eq("status", "published").order("title"),
+      role === "admin" ? listInstructors(supabase) : undefined,
     ]);
 
   const cohort = cohortRow?.cohorts as unknown as
-    | { name: string; program: string; school: string; term: string }
+    | { name: string }
     | null;
   const roster: ManagedStudent[] = (students ?? []).map((s) => ({
     id: s.id,
@@ -73,7 +75,7 @@ async function Manage({ params, searchParams }: Props) {
         </Link>
         <h1 className="mt-4 text-3xl font-bold tracking-tight">Manage {cls.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {cohort ? `${cohort.name} · ${cohort.program} · ${cohort.school} · ${cohort.term}` : "No cohort"}
+          {cohort?.name ?? "No cohort"}
         </p>
         {created === "1" && (
           <p role="status" className="mt-4 rounded-lg border border-border bg-muted px-4 py-3 text-sm font-medium">
@@ -94,6 +96,11 @@ async function Manage({ params, searchParams }: Props) {
       <Section id="join" title="4. Share the join link">
         <JoinLink code={cls.join_code} />
       </Section>
+      {instructors && (
+        <Section id="instructor" title="Instructor">
+          <InstructorPicker classId={id} currentId={cls.instructor_id} instructors={instructors} />
+        </Section>
+      )}
     </main>
   );
 }

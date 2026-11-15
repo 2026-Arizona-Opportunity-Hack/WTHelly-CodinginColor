@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { listInstructors } from "@/lib/class-setup/access";
 import { NewClassForm, type CohortOption } from "./new-class-form";
 
 const linkClass =
@@ -11,7 +12,6 @@ const linkClass =
 export default function InstructorPage() {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-8">
-      <h1 className="text-3xl font-bold tracking-tight">My classes</h1>
       <Suspense fallback={<p>Loading classes…</p>}>
         <Classes />
       </Suspense>
@@ -32,9 +32,10 @@ async function Classes() {
     .order("created_at", { ascending: false });
   if (!isAdmin) classQuery = classQuery.eq("instructor_id", user.id);
 
-  const [{ data: classes }, { data: cohorts }] = await Promise.all([
+  const [{ data: classes }, { data: cohorts }, instructors] = await Promise.all([
     classQuery,
-    supabase.from("cohorts").select("id, name, program, school, term").order("name"),
+    supabase.from("cohorts").select("id, name").order("name"),
+    isAdmin ? listInstructors(supabase) : undefined,
   ]);
   const classRows = (classes ?? []) as unknown as {
     id: string;
@@ -54,11 +55,13 @@ async function Classes() {
 
   const cohortOptions: CohortOption[] = (cohorts ?? []).map((c) => ({
     id: c.id,
-    label: `${c.name} · ${c.program} · ${c.school} · ${c.term}`,
+    label: c.name,
   }));
 
   return (
     <>
+      {/* Admins see every class, not just ones they teach. */}
+      <h1 className="text-3xl font-bold tracking-tight">{isAdmin ? "Classes" : "My classes"}</h1>
       <section aria-labelledby="classes-heading" className="space-y-3">
         <h2 id="classes-heading" className="text-xl font-semibold">
           {isAdmin ? "All classes" : "Your classes"}
@@ -117,7 +120,7 @@ async function Classes() {
             You&apos;ll get a 6-character class code, then set up the roster and modules.
           </p>
         </div>
-        <NewClassForm cohorts={cohortOptions} />
+        <NewClassForm cohorts={cohortOptions} instructors={instructors} selfId={user.id} />
       </section>
     </>
   );

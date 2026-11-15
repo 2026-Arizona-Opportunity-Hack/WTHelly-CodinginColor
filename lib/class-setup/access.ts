@@ -43,4 +43,31 @@ export async function getManagedClass(classId: string) {
   return { ...staff, cls };
 }
 
+/** True when the id is a profile with role instructor or admin (who can own a class). */
+export async function isAssignableInstructor(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  profileId: string,
+) {
+  if (!idSchema.safeParse(profileId).success) return false;
+  const { data } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", profileId)
+    .in("role", ["instructor", "admin"])
+    .maybeSingle();
+  return Boolean(data);
+}
+
+/** Instructor and admin profiles, for the admin-only "Instructor" dropdowns. */
+export async function listInstructors(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .in("role", ["instructor", "admin"])
+    .order("full_name");
+  return (data ?? []) as InstructorOption[];
+}
+
+export type InstructorOption = { id: string; full_name: string };
+
 export type ManagedClass = NonNullable<Awaited<ReturnType<typeof getManagedClass>>>;
