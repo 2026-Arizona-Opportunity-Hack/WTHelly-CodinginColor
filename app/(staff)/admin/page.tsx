@@ -13,7 +13,7 @@ export default function AdminPage() {
         <h1 className="text-3xl font-bold tracking-tight">Admin</h1>
         <nav aria-label="Admin quick links" className="mt-3 flex flex-wrap gap-3">
           <Link href="/admin/modules" className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Modules</Link>
-          <Link href="/instructor" className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">My classes</Link>
+          <Link href="/instructor" className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">Classes</Link>
           <Link href="/admin/api-keys" className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring">API keys</Link>
         </nav>
       </div>

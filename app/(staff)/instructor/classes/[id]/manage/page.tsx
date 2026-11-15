@@ -33,7 +33,7 @@ async function Manage({ params, searchParams }: Props) {
   // Never select("*") on students: pin_hash isn't readable by this client.
   const [{ data: cohortRow }, { data: students }, { data: assignments }, { data: modules }, instructors] =
     await Promise.all([
-      supabase.from("classes").select("cohorts(name, program, school, term)").eq("id", id).maybeSingle(),
+      supabase.from("classes").select("cohorts(name)").eq("id", id).maybeSingle(),
       supabase
         .from("students")
         .select("id, display_name, school, joined_at, pin_locked_until")
@@ -45,7 +45,7 @@ async function Manage({ params, searchParams }: Props) {
     ]);
 
   const cohort = cohortRow?.cohorts as unknown as
-    | { name: string; program: string; school: string; term: string }
+    | { name: string }
     | null;
   const roster: ManagedStudent[] = (students ?? []).map((s) => ({
     id: s.id,
@@ -75,7 +75,7 @@ async function Manage({ params, searchParams }: Props) {
         </Link>
         <h1 className="mt-4 text-3xl font-bold tracking-tight">Manage {cls.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {cohort ? `${cohort.name} · ${cohort.program} · ${cohort.school} · ${cohort.term}` : "No cohort"}
+          {cohort?.name ?? "No cohort"}
         </p>
         {created === "1" && (
           <p role="status" className="mt-4 rounded-lg border border-border bg-muted px-4 py-3 text-sm font-medium">
