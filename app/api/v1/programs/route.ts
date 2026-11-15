@@ -1,8 +1,6 @@
 import { apiError, apiJson, getDateFilters, requireApiKey } from "@/lib/api/request";
 import { getProgramReport } from "@/lib/api/reports";
 
-export const dynamic = "force-dynamic";
-
 export async function GET(request: Request) {
   try {
     const auth = await requireApiKey(request);
