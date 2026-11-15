@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { WorksheetActivity } from "./worksheet-activity";
 import { buildSubmissionAnswer, postActivitySubmission, type SubmissionResponse } from "./activity-player-submission";
 
 export type PlayerWorksheetQuestion =
@@ -178,9 +179,12 @@ function ActivityContentView({
     );
   }
   if (content.type === "worksheet") {
-    return renderWorksheet ? renderWorksheet({ activityId: activity.id, content, answers: (answer && typeof answer === "object" ? answer : {}), onChange: (value) => onAnswer(activity.id, value) }) : (
-      <p className="rounded-xl border border-dashed border-[#c9a993] bg-[#fffdf8] p-4 text-sm leading-6 text-[#765d51]">Connect Step 5 through the <code className="font-mono">renderWorksheet</code> prop after it merges.</p>
-    );
+    // Answers are { [questionId]: optionIndex | text }, the shape buildSubmissionAnswer expects.
+    const worksheetAnswers: PlayerWorksheetAnswers = answer && typeof answer === "object" ? answer : {};
+    const onWorksheetChange = (value: PlayerWorksheetAnswers) => onAnswer(activity.id, value);
+    return renderWorksheet
+      ? renderWorksheet({ activityId: activity.id, content, answers: worksheetAnswers, onChange: onWorksheetChange })
+      : <WorksheetActivity key={activity.id} content={content} initialAnswers={worksheetAnswers} onChange={onWorksheetChange} />;
   }
   const options = content.type === "check" || content.kind === "mcq" ? content.options : undefined;
   return <AnswerField activityId={activity.id} id={`${instanceId}-answer`} prompt={content.prompt} options={options} answer={answer} instanceId={instanceId} onAnswer={onAnswer} />;
