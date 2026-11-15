@@ -36,6 +36,7 @@ function studentContent(type: string, value: unknown): PlayerActivityContent | n
   if (type === "video" && typeof data.url === "string") return { type, url: data.url, ...(typeof data.notes === "string" ? { notes: data.notes } : {}) };
   if (type === "check" && typeof data.prompt === "string") return { type, prompt: data.prompt, ...(strings(data.options) ? { options: strings(data.options)! } : {}) };
   if (type === "exit" && typeof data.prompt === "string" && (data.kind === "mcq" || data.kind === "short")) return { type, prompt: data.prompt, kind: data.kind, ...(strings(data.options) ? { options: strings(data.options)! } : {}) };
+  if (type === "code" && typeof data.prompt === "string") return { type, prompt: data.prompt, ...(typeof data.starter === "string" ? { starterCode: data.starter } : {}) };
   if (type === "worksheet" && Array.isArray(data.questions)) {
     const questions: PlayerWorksheetQuestion[] = [];
     for (const raw of data.questions) {

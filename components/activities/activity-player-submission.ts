@@ -5,6 +5,11 @@ export type { SubmissionResponse, SubmissionError };
 
 export function buildSubmissionAnswer(content: PlayerActivityContent, answer: PlayerAnswer | undefined) {
   if (content.type === "video") return { watched: true };
+  if (content.type === "code") {
+    const code = typeof answer === "string" ? answer : content.starterCode ?? "";
+    if (!code.trim()) throw new Error("Write Python code before submitting.");
+    return { code };
+  }
   if (content.type === "worksheet") {
     const answers = answer && typeof answer === "object" ? answer : {};
     const complete = content.questions.length > 0 && content.questions.every((question) => {

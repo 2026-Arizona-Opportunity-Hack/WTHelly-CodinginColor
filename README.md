@@ -115,7 +115,7 @@ After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewe
 
 ### Python runner demo
 
-After starting `npm run dev`, open [http://localhost:3000/demo/python-runner](http://localhost:3000/demo/python-runner) and press **Run code**. The starter prints `1`, `2`, `3`. Pyodide loads from jsDelivr on the first run, so the browser needs internet access. Stop, reset and a five-second timeout are available. Test grading and student submissions are not implemented yet.
+After starting `npm run dev`, open [http://localhost:3000/demo/python-runner](http://localhost:3000/demo/python-runner) and press **Run code**. The starter prints `1`, `2`, `3`. Pyodide loads from jsDelivr on the first run, so the browser needs internet access. Stop, reset and a five-second timeout are available. The activity-player preview also includes Python practice. In a student code activity, Run executes locally and Submit saves `{ code }` through `/api/submissions`; the server currently marks code complete without grading tests.
 
 ### Digital worksheets demo
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type {
   PythonRunnerRequest,
   PythonRunnerResponse,
@@ -10,7 +10,10 @@ const RUN_TIMEOUT_MS = 5_000;
 
 type PythonRunnerProps = {
   prompt: string;
-  starterCode: string;
+  starterCode?: string;
+  code?: string;
+  onChange?: (code: string) => void;
+  embedded?: boolean;
 };
 
 type RunnerStatus =
@@ -22,8 +25,14 @@ type RunnerStatus =
   | "timed-out"
   | "error";
 
-export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
-  const [code, setCode] = useState(starterCode);
+export function PythonRunner({ prompt, starterCode = "", code: controlledCode, onChange, embedded = false }: PythonRunnerProps) {
+  const editorId = useId();
+  const [localCode, setLocalCode] = useState(starterCode);
+  const code = controlledCode ?? localCode;
+  function changeCode(value: string) {
+    if (controlledCode === undefined) setLocalCode(value);
+    onChange?.(value);
+  }
   const [stdout, setStdout] = useState("");
   const [stderr, setStderr] = useState("");
   const [pythonError, setPythonError] = useState("");
@@ -146,7 +155,7 @@ export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
   function resetCode() {
     activeRunIdRef.current = -1;
     discardWorker();
-    setCode(starterCode);
+    changeCode(starterCode);
     setStdout("");
     setStderr("");
     setPythonError("");
@@ -156,37 +165,37 @@ export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
   const isBusy = status === "loading" || status === "running";
 
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-5 rounded-2xl border bg-card p-4 shadow-sm sm:p-6">
+    <section aria-label="Python practice" className={embedded ? "min-w-0 space-y-5" : "mx-auto w-full max-w-4xl space-y-5 rounded-[1.75rem] border border-[#b98b70] bg-[#fffaf1] p-4 shadow-[0_14px_40px_rgba(77,37,26,0.10)] sm:p-6"}>
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#8b4c40]">
           Python practice
         </p>
-        <h1 className="text-2xl font-bold tracking-tight">Your code workspace</h1>
-        <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{prompt}</p>
+        {!embedded && <h1 className="font-serif text-2xl font-semibold text-[#5d2028]">Your code workspace</h1>}
+        <p className="max-w-3xl break-words font-serif text-lg leading-7 text-[#382a26]">{prompt}</p>
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="python-code" className="text-sm font-semibold">
+        <label htmlFor={editorId} className="text-sm font-semibold text-[#5d2028]">
           Python code
         </label>
         <textarea
-          id="python-code"
-          aria-describedby="python-editor-help"
+          id={editorId}
+          aria-describedby={`${editorId}-help`}
           autoCapitalize="off"
           autoCorrect="off"
-          className="min-h-64 w-full resize-y rounded-xl border bg-background px-4 py-3 font-mono text-sm leading-6 outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
+          className="min-h-64 w-full min-w-0 resize-y rounded-xl border border-[#b98770] bg-[#fffefa] px-4 py-3 font-mono text-sm leading-6 text-[#382a26] outline-none transition focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2"
           spellCheck={false}
           value={code}
-          onChange={(event) => setCode(event.target.value)}
+          onChange={(event) => changeCode(event.target.value)}
         />
-        <p id="python-editor-help" className="text-xs text-muted-foreground">
-          Your code runs in a separate browser worker. No app credentials are sent to it.
+        <p id={`${editorId}-help`} className="text-xs text-[#765d51]">
+          Run checks your code here. Submit saves your code when you are ready.
         </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <button
-          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#7a2932] bg-[#762e32] px-5 py-3 font-semibold text-[#fff7e9] hover:bg-[#64252e] focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 disabled:opacity-45"
           disabled={isBusy}
           onClick={runCode}
           type="button"
@@ -194,7 +203,7 @@ export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
           {status === "loading" ? "Starting Python…" : status === "running" ? "Running…" : "Run code"}
         </button>
         <button
-          className="inline-flex min-h-11 items-center justify-center rounded-lg border px-5 text-sm font-semibold transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#b98770] bg-[#fffdf8] px-5 py-3 font-semibold text-[#64252e] hover:bg-[#f7e8df] focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 disabled:opacity-45"
           disabled={!isBusy}
           onClick={stopCode}
           type="button"
@@ -202,13 +211,13 @@ export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
           Stop
         </button>
         <button
-          className="inline-flex min-h-11 items-center justify-center rounded-lg border px-5 text-sm font-semibold transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#b98770] bg-[#fffdf8] px-5 py-3 font-semibold text-[#64252e] hover:bg-[#f7e8df] focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2"
           onClick={resetCode}
           type="button"
         >
           Reset
         </button>
-        <p aria-live="polite" className="text-sm text-muted-foreground">
+        <p role="status" aria-live="polite" className="text-sm text-[#765d51]">
           {status === "idle" && "Ready when you are."}
           {status === "loading" && "Loading Python in your browser…"}
           {status === "running" && "Your code is running. It will stop after 5 seconds."}
@@ -219,27 +228,27 @@ export function PythonRunner({ prompt, starterCode }: PythonRunnerProps) {
         </p>
       </div>
 
-      <section aria-label="Python console" aria-live="polite" className="space-y-3 rounded-xl bg-slate-950 p-4 text-slate-100">
-        <h2 className="text-sm font-semibold">Console</h2>
+      <section aria-label="Python console" aria-live="polite" className="min-w-0 space-y-3 rounded-xl border border-[#d7b89f] bg-[#fffaf1] p-4 text-[#382a26]">
+        {embedded ? <h3 className="font-serif text-lg font-semibold text-[#5d2028]">Console</h3> : <h2 className="font-serif text-lg font-semibold text-[#5d2028]">Console</h2>}
         {!stdout && !stderr && !pythonError && (
-          <p className="font-mono text-sm text-slate-400">Your program output will appear here.</p>
+          <p className="font-mono text-sm text-[#765d51]">Your program output will appear here.</p>
         )}
         {stdout && (
           <div>
-            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">Output</h3>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#5d2028]">Output</p>
             <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm">{stdout}</pre>
           </div>
         )}
         {stderr && (
           <div>
-            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-300">Standard error</h3>
-            <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-amber-100">{stderr}</pre>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8c3037]">Standard error</p>
+            <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-[#8c3037]">{stderr}</pre>
           </div>
         )}
         {pythonError && (
           <div>
-            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-rose-300">Python error</h3>
-            <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-rose-100">{pythonError}</pre>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#8c3037]">Python error</p>
+            <pre className="overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm text-[#8c3037]">{pythonError}</pre>
           </div>
         )}
       </section>

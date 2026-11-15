@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { WorksheetActivity } from "./worksheet-activity";
+import { PythonRunner } from "./python-runner";
 import { buildSubmissionAnswer, postActivitySubmission, type SubmissionResponse } from "./activity-player-submission";
 
 export type PlayerWorksheetQuestion =
@@ -16,6 +17,7 @@ export type PlayerActivityContent =
   | { type: "video"; url: string; notes?: string }
   | { type: "check"; prompt: string; options?: string[] }
   | PlayerWorksheetContent
+  | { type: "code"; prompt: string; starterCode?: string }
   | { type: "exit"; prompt: string; kind: "mcq" | "short"; options?: string[] };
 
 export type PlayerActivity = { id: string; title: string; content: PlayerActivityContent };
@@ -45,7 +47,7 @@ const inputClass = "min-h-12 w-full min-w-0 rounded-xl border border-[#b98770] b
 const buttonClass = "inline-flex min-h-12 items-center justify-center rounded-xl border px-5 py-3 font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#7a2932] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45";
 
 function activityKindLabel(type: PlayerActivityContent["type"]) {
-  return { video: "Lesson film", check: "Quick check", worksheet: "Practice sheet", exit: "Exit reflection" }[type];
+  return { video: "Lesson film", check: "Quick check", worksheet: "Practice sheet", exit: "Exit reflection", code: "Python practice" }[type];
 }
 
 function safeEmbedUrl(rawUrl: string) {
@@ -185,6 +187,9 @@ function ActivityContentView({
     return renderWorksheet
       ? renderWorksheet({ activityId: activity.id, content, answers: worksheetAnswers, onChange: onWorksheetChange })
       : <WorksheetActivity key={activity.id} content={content} initialAnswers={worksheetAnswers} onChange={onWorksheetChange} />;
+  }
+  if (content.type === "code") {
+    return <PythonRunner prompt={content.prompt} starterCode={content.starterCode} code={typeof answer === "string" ? answer : content.starterCode ?? ""} onChange={(value) => onAnswer(activity.id, value)} embedded />;
   }
   const options = content.type === "check" || content.kind === "mcq" ? content.options : undefined;
   return <AnswerField activityId={activity.id} id={`${instanceId}-answer`} prompt={content.prompt} options={options} answer={answer} instanceId={instanceId} onAnswer={onAnswer} />;
