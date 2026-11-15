@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getModuleCompletionPct, getOverallCompletionPct, getStudentProgress, type ProgressAssessment, type ProgressModule, type ProgressSubmission } from "@/lib/rules";
+import { getModuleCompletionPct, getOverallCompletionPct, getStudentProgress, type ProgressAssessment, type ProgressModule, type ProgressSubmission } from "@/lib/class-progress";
 
 type Params = { params: Promise<{ id: string }> };
 
