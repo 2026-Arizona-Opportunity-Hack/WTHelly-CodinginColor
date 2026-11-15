@@ -24,9 +24,13 @@ const inputClass =
 const headingClass = "text-2xl font-semibold tracking-tight outline-none";
 
 /** AUTH-2 / AUTH-3: class code → pick your name → set or enter your PIN. */
-export function JoinForm() {
+/**
+ * `initialCode` comes from the join link (/join?code=ABC123, CLS-5) and is
+ * "" otherwise. The page keys this form by it, so a different code is a fresh form.
+ */
+export function JoinForm({ initialCode }: { initialCode: string }) {
   const [state, setState] = useState<Step>({ step: "code" });
-  const [classCode, setClassCode] = useState("");
+  const [classCode, setClassCode] = useState(initialCode);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -44,14 +48,17 @@ export function JoinForm() {
 
   // When this form is hidden (cacheComponents keeps it alive in <Activity>
   // after navigating away) or unmounted, forget the class, name and step, so
-  // the next person on a shared device starts from a blank class code.
+  // the next person on a shared device starts over. Reset to the URL's code,
+  // not to blank: this cleanup also runs on Strict Mode's dev remount and on
+  // every Activity hide, and a blank here wiped the join-link pre-fill.
+  // /join with no ?code= has initialCode "", so it still resets fully blank.
   useEffect(
     () => () => {
       setState({ step: "code" });
-      setClassCode("");
+      setClassCode(initialCode);
       setError("");
     },
-    [],
+    [initialCode],
   );
 
   function go(next: Step) {
