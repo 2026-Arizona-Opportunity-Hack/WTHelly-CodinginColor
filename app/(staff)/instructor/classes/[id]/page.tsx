@@ -95,7 +95,11 @@ async function Dashboard({ params }: Params) {
                 <td className="px-4 py-3">{student.progress.currentModule?.title ?? (modules.length ? "All complete" : "No modules assigned")}</td>
                 <td className="px-4 py-3">{student.progress.completionPct}%</td>
                 <td className="px-4 py-3">{formatScore(student.progress.pre)}</td><td className="px-4 py-3">{formatScore(student.progress.post)}</td>
-                <td className="px-4 py-3">{student.progress.gain === null ? "—" : `${student.progress.gain > 0 ? "+" : ""}${student.progress.gain} pp`}</td>
+                <td className="px-4 py-3">
+                  {student.progress.gain === null ? "—" : `${student.progress.gain > 0 ? "+" : ""}${student.progress.gain} pp`}
+                  {student.progress.scoresModule && (student.progress.pre !== null || student.progress.post !== null) &&
+                    <span className="mt-0.5 block text-xs text-muted-foreground">{student.progress.scoresModule.title}</span>}
+                </td>
                 <td className="whitespace-nowrap px-4 py-3">{student.progress.lastActive ? new Date(student.progress.lastActive).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : "Not yet"}</td>
               </tr>)}
               {!roster.length && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">No students are enrolled in this class yet.</td></tr>}
