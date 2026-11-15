@@ -3,16 +3,27 @@
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { inputClass } from "@/components/action-message";
+import type { InstructorOption } from "@/lib/class-setup/access";
 import { createClass, type NewClassState } from "./actions";
 
 export type CohortOption = { id: string; label: string };
 
 const initial: NewClassState = { ok: true, message: "" };
 
-export function NewClassForm({ cohorts }: { cohorts: CohortOption[] }) {
+/** `instructors` is passed only for admins; instructors always own the classes they create. */
+export function NewClassForm({
+  cohorts,
+  instructors,
+  selfId,
+}: {
+  cohorts: CohortOption[];
+  instructors?: InstructorOption[];
+  selfId: string;
+}) {
   const [state, formAction, pending] = useActionState(createClass, initial);
   const nameError = !state.ok && state.field === "name";
   const cohortError = !state.ok && state.field === "cohortId";
+  const instructorError = !state.ok && state.field === "instructorId";
 
   if (!cohorts.length) {
     return (
@@ -27,7 +38,7 @@ export function NewClassForm({ cohorts }: { cohorts: CohortOption[] }) {
       key={JSON.stringify(state.values ?? null)}
       action={formAction}
       noValidate
-      className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+      className={`grid gap-4 sm:items-end ${instructors ? "sm:grid-cols-[1fr_1fr_1fr_auto]" : "sm:grid-cols-[1fr_1fr_auto]"}`}
     >
       <div className="flex flex-col gap-2">
         <label htmlFor="class-name" className="text-sm font-medium">
@@ -67,10 +78,31 @@ export function NewClassForm({ cohorts }: { cohorts: CohortOption[] }) {
           ))}
         </select>
       </div>
+      {instructors && (
+        <div className="flex flex-col gap-2">
+          <label htmlFor="class-instructor" className="text-sm font-medium">
+            Instructor
+          </label>
+          <select
+            id="class-instructor"
+            name="instructorId"
+            defaultValue={state.values?.instructorId || selfId}
+            aria-invalid={instructorError || undefined}
+            aria-describedby={instructorError ? "new-class-error" : undefined}
+            className={inputClass}
+          >
+            {instructors.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.full_name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <Button type="submit" disabled={pending} className="h-10 px-4 text-base">
         {pending ? "Creating…" : "Create class"}
       </Button>
-      <div role="alert" className="sm:col-span-3">
+      <div role="alert" className={instructors ? "sm:col-span-4" : "sm:col-span-3"}>
         {!state.ok && (
           <p id="new-class-error" className="text-sm font-medium text-destructive">
             {state.message}

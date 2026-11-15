@@ -2,11 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { connection } from "next/server";
-import { getManagedClass } from "@/lib/class-setup/access";
+import { getManagedClass, listInstructors } from "@/lib/class-setup/access";
 import { RosterImport } from "./roster-import";
 import { StudentList, type ManagedStudent } from "./student-list";
 import { ModuleAssignments, type ModuleOption } from "./module-assignments";
 import { JoinLink } from "./join-link";
+import { InstructorPicker } from "./instructor-picker";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -27,10 +28,10 @@ async function Manage({ params, searchParams }: Props) {
   // Role check + ownership: instructors their own classes, admins any.
   const access = await getManagedClass(id);
   if (!access) notFound();
-  const { supabase, cls } = access;
+  const { supabase, cls, role } = access;
 
   // Never select("*") on students: pin_hash isn't readable by this client.
-  const [{ data: cohortRow }, { data: students }, { data: assignments }, { data: modules }] =
+  const [{ data: cohortRow }, { data: students }, { data: assignments }, { data: modules }, instructors] =
     await Promise.all([
       supabase.from("classes").select("cohorts(name, program, school, term)").eq("id", id).maybeSingle(),
       supabase
@@ -40,6 +41,7 @@ async function Manage({ params, searchParams }: Props) {
         .order("display_name"),
       supabase.from("assignments").select("module_id, position").eq("class_id", id).order("position"),
       supabase.from("modules").select("id, title").eq("status", "published").order("title"),
+      role === "admin" ? listInstructors(supabase) : undefined,
     ]);
 
   const cohort = cohortRow?.cohorts as unknown as
@@ -94,6 +96,11 @@ async function Manage({ params, searchParams }: Props) {
       <Section id="join" title="4. Share the join link">
         <JoinLink code={cls.join_code} />
       </Section>
+      {instructors && (
+        <Section id="instructor" title="Instructor">
+          <InstructorPicker classId={id} currentId={cls.instructor_id} instructors={instructors} />
+        </Section>
+      )}
     </main>
   );
 }

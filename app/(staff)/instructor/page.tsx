@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { requireRole } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { listInstructors } from "@/lib/class-setup/access";
 import { NewClassForm, type CohortOption } from "./new-class-form";
 
 const linkClass =
@@ -32,9 +33,10 @@ async function Classes() {
     .order("created_at", { ascending: false });
   if (!isAdmin) classQuery = classQuery.eq("instructor_id", user.id);
 
-  const [{ data: classes }, { data: cohorts }] = await Promise.all([
+  const [{ data: classes }, { data: cohorts }, instructors] = await Promise.all([
     classQuery,
     supabase.from("cohorts").select("id, name, program, school, term").order("name"),
+    isAdmin ? listInstructors(supabase) : undefined,
   ]);
   const classRows = (classes ?? []) as unknown as {
     id: string;
@@ -117,7 +119,7 @@ async function Classes() {
             You&apos;ll get a 6-character class code, then set up the roster and modules.
           </p>
         </div>
-        <NewClassForm cohorts={cohortOptions} />
+        <NewClassForm cohorts={cohortOptions} instructors={instructors} selfId={user.id} />
       </section>
     </>
   );

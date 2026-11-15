@@ -24,7 +24,12 @@ export default function AdminPage() {
   );
 }
 
-type ClassRow = { id: string; name: string; cohorts: { name: string; school: string; program: string } | null };
+type ClassRow = {
+  id: string;
+  name: string;
+  cohorts: { name: string; school: string; program: string } | null;
+  profiles: { full_name: string } | null;
+};
 type AssignmentRow = { class_id: string; module_id: string; position: number; modules: { title: string } | null };
 
 async function AllClasses() {
@@ -32,7 +37,7 @@ async function AllClasses() {
   // The layout already restricts /admin to admins; RLS lets admins read every row.
   const supabase = await createClient();
   const [classResult, studentResult, assignmentResult, assessmentResult, submissionResult, resultResult] = await Promise.all([
-    supabase.from("classes").select("id, name, cohorts(name, school, program)").order("name"),
+    supabase.from("classes").select("id, name, cohorts(name, school, program), profiles(full_name)").order("name"),
     supabase.from("students").select("id, class_id"),
     supabase.from("assignments").select("class_id, module_id, position, modules(title)").order("position"),
     supabase.from("assessments").select("id, module_id, kind"),
@@ -97,7 +102,7 @@ async function AllClasses() {
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
-                {["Class", "Cohort", "School", "Program", "Students", "Completion", "Avg gain", "Both tests", "Setup"].map((heading) => (
+                {["Class", "Instructor", "Cohort", "School", "Program", "Students", "Completion", "Avg gain", "Both tests", "Setup"].map((heading) => (
                   <th key={heading} scope="col" className="px-4 py-3 font-medium">{heading}</th>
                 ))}
               </tr>
@@ -108,6 +113,7 @@ async function AllClasses() {
                   <th scope="row" className="px-4 py-3">
                     <Link href={`/instructor/classes/${row.id}`} className={linkClass}>{row.name}</Link>
                   </th>
+                  <td className="px-4 py-3">{row.profiles?.full_name ?? "—"}</td>
                   <td className="px-4 py-3">{row.cohorts?.name ?? "—"}</td>
                   <td className="px-4 py-3">{row.cohorts?.school ?? "—"}</td>
                   <td className="px-4 py-3">{row.cohorts?.program ?? "—"}</td>
@@ -121,7 +127,7 @@ async function AllClasses() {
                 </tr>
               ))}
               {!rows.length && (
-                <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">No classes yet.</td></tr>
+                <tr><td colSpan={10} className="px-4 py-8 text-center text-muted-foreground">No classes yet.</td></tr>
               )}
             </tbody>
           </table>
