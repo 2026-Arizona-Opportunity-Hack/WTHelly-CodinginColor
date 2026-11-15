@@ -51,6 +51,10 @@ Judges score **Scope, Documentation, Polish and Security**, plus a separate **Ac
 
 A link-based curriculum platform for Coding in Color: the platform teaches and the instructor manages. Instructors set up a class and assign modules in minutes; students (no email needed) work through modules with videos, checks, worksheets and pre/post tests; CIC sees completion and **learning gain** per student, class and cohort, and its org dashboard can read the numbers through a key-authenticated API.
 
+The student activity route loads permitted activity content on the server, strips answer keys, and uses `components/activities/activity-player.tsx` to post answers to `/api/submissions`. Next opens the server's `nextHref` only after a confirmed save. Worksheet rendering awaits the Step 5 merge.
+
+Preview the player locally at `/demo/activity-player` after `npm run dev`. Choose a video, check, worksheet or exit screen; this preview does not submit.
+
 - Requirements with IDs and acceptance criteria: [`docs/requirements.md`](docs/requirements.md)
 - Build plan, database schema and routes: [`docs/mvp.md`](docs/mvp.md)
 - Rules for AI coding tools: [`AGENTS.md`](AGENTS.md)
@@ -104,6 +108,10 @@ Staff sign in at `/login` with a magic link. Only emails that already exist in S
    ```
 
 After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewers on `/review`. A signed-in user without a profile, or with the wrong role for a page, gets the "no access" page with HTTP 403 (`proxy.ts` checks first, then each staff layout checks again on the server).
+
+### Digital worksheets demo
+
+After starting `npm run dev`, open [http://localhost:3000/demo/worksheets](http://localhost:3000/demo/worksheets) and try the multiple-choice, short-answer, long-answer and code-entry questions. The live answer preview shows the data received through `onChange`; answers are not saved or submitted.
 
 ## How we work (team rules)
 

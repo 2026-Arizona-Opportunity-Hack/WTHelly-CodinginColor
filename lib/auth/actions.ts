@@ -1,9 +1,9 @@
 "use server";
 
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type MagicLinkState = {
   status: "idle" | "sent" | "error";
@@ -75,9 +75,32 @@ function describeOtpError(code: string | undefined, status: number | undefined) 
   return null;
 }
 
-/** Sign out of the current session (staff or student) and go to /login. */
+/**
+ * "Not you? Switch student" on shared Chromebooks: sign this browser out.
+ * No redirect here: the caller (SwitchStudentButton) does a full page load to
+ * /join, so no React state from the previous student survives. The anonymous
+ * user is deleted (which also removes its student_devices row), so nothing is
+ * left linked to the student. Progress is stored on the student, not the
+ * device, so nothing is lost.
+ */
+export async function switchStudent() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  await supabase.auth.signOut();
+  if (user?.is_anonymous) {
+    const { error } = await createAdminClient().auth.admin.deleteUser(user.id);
+    if (error) console.error("switchStudent: delete anonymous user failed", error.code);
+  }
+}
+
+/**
+ * Sign out of the current session. No redirect here: the caller
+ * (SignOutButton) does a full page load to /login, so the previous user's
+ * form state isn't kept by client-side navigation.
+ */
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/login");
 }

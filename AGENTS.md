@@ -86,6 +86,7 @@ AI hints use the OHack AI gateway (OPENAI_BASE_URL, OPENAI_API_KEY), server-side
 
 - Students are minors: store only display_name, school, class, pin_hash. Never add student PII.
 - Every table has RLS; new tables get policies in a new file in supabase/migrations/.
+- New tables need grants for both authenticated (as needed) and service_role in their migration, because auto-expose is off.
 - Students never read activities/assessments directly: load server-side with the service role
   and strip `answer` fields. Scoring happens in server routes only.
 - SUPABASE_SERVICE_ROLE_KEY and OPENAI_API_KEY are server-only.
