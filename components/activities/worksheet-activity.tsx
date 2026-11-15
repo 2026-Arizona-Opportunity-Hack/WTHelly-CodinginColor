@@ -26,6 +26,7 @@ export type WorksheetAnswers = Record<string, WorksheetAnswer>;
 
 type WorksheetActivityProps = {
   content: WorksheetContent;
+  initialAnswers?: WorksheetAnswers;
   onChange?: (answers: WorksheetAnswers) => void;
 };
 
@@ -47,10 +48,10 @@ function isAnswered(question: WorksheetQuestion, answer: WorksheetAnswer | undef
   return typeof answer === "string" && answer.trim().length > 0;
 }
 
-export function WorksheetActivity({ content, onChange }: WorksheetActivityProps) {
+export function WorksheetActivity({ content, initialAnswers, onChange }: WorksheetActivityProps) {
   const instanceId = useId();
-  const [answers, setAnswers] = useState<WorksheetAnswers>({});
-  const answersRef = useRef<WorksheetAnswers>({});
+  const [answers, setAnswers] = useState<WorksheetAnswers>(() => initialAnswers ?? {});
+  const answersRef = useRef<WorksheetAnswers>(initialAnswers ?? {});
   const answeredCount = content.questions.filter((question) =>
     isAnswered(question, answers[question.id]),
   ).length;
