@@ -89,6 +89,22 @@ Teammates: get the values from a teammate by DM, never in a channel, issue or co
 
 Other commands: `npm run build` (production build), `npm run lint`.
 
+### Staff sign-in (one-time Supabase setup)
+
+Staff sign in at `/login` with a magic link. Only emails that already exist in Supabase Auth **and** have a `profiles` row can get in; nobody can sign themselves up.
+
+1. Supabase → Authentication → URL Configuration: set **Site URL** to the deployed URL and add `http://localhost:3000/auth/callback` and `https://<your-vercel-app>/auth/callback` to **Redirect URLs**.
+2. Add a staff user: Authentication → Users → **Add user → Create new user** with their email and **Auto confirm** checked (no email is sent). Magic links need custom SMTP (Authentication → Emails → SMTP Settings); Supabase's built-in sender allows only a few emails per hour.
+3. Give them a profile and role in the SQL editor (the first admin is made this way; later, admins invite from the app — AUTH-4):
+
+   ```sql
+   insert into profiles (id, full_name, role)
+   select id, 'Your Name', 'admin' from auth.users where email = 'you@example.org'
+   on conflict (id) do update set role = excluded.role;
+   ```
+
+After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewers on `/review`. A signed-in user without a profile, or with the wrong role for a page, gets the "no access" page with HTTP 403 (`proxy.ts` checks first, then each staff layout checks again on the server).
+
 ## How we work (team rules)
 
 **Branches**
