@@ -7,11 +7,11 @@ import { listInstructors } from "@/lib/class-setup/access";
 import { NewClassForm, type CohortOption } from "./new-class-form";
 
 const linkClass =
-  "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+  "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring";
 
 export default function InstructorPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-8">
+    <main id="main" className="mx-auto w-full max-w-5xl flex-1 space-y-8 px-4 py-8">
       <Suspense fallback={<p>Loading classes…</p>}>
         <Classes />
       </Suspense>
@@ -67,7 +67,7 @@ async function Classes() {
           {isAdmin ? "All classes" : "Your classes"}
         </h2>
         <div className="overflow-x-auto rounded-xl border">
-          <table className="w-full text-left text-sm">
+          <table aria-label={isAdmin ? "All classes" : "Your classes"} className="w-full text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 {["Class", "Cohort", "Students", "Class code", "Setup"].map((h) => (

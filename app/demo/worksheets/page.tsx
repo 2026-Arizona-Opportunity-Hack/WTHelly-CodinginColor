@@ -67,6 +67,7 @@ export default function WorksheetsDemoPage() {
 
   return (
     <main
+      id="main"
       className="min-h-screen overflow-hidden bg-[#f3e6d4] px-3 py-6 text-[#382a26] sm:px-6 sm:py-10"
       style={{
         backgroundImage:

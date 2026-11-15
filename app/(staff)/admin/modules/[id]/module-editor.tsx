@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
+import { cloneElement, createContext, isValidElement, useContext, useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { inputClass } from "@/components/action-message";
 import {
@@ -24,6 +24,7 @@ type Activity = ModulePayload["activities"][number];
 const textareaClass = inputClass.replace("h-10", "min-h-20 py-2");
 const labelClass = "block text-sm font-medium";
 const sectionClass = "space-y-4 rounded-xl border p-4 sm:p-6";
+const ModuleSaveErrorContext = createContext(false);
 
 const KIND_LABEL: Record<WorksheetQuestion["kind"], string> = {
   mcq: "Multiple choice",
@@ -109,6 +110,7 @@ export function ModuleEditor({
   }
 
   return (
+    <ModuleSaveErrorContext.Provider value={Boolean(result && !result.ok)}>
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{form.title || "Untitled module"}</h1>
@@ -131,7 +133,7 @@ export function ModuleEditor({
         </div>
         <div role="alert">
           {result && !result.ok && (
-            <div className="rounded-lg border border-destructive/40 px-4 py-3 text-sm text-destructive">
+            <div id="module-save-error" className="rounded-lg border border-destructive/40 px-4 py-3 text-sm text-destructive">
               <p className="font-medium">{result.message}</p>
               {result.problems && (
                 <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -199,15 +201,15 @@ export function ModuleEditor({
       />
 
       <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t bg-background px-4 py-3">
-        <Button type="button" size="lg" disabled={pending} onClick={() => submit("save")}>
+        <Button type="button" size="lg" disabled={pending} aria-describedby={result && !result.ok ? "module-save-error" : undefined} onClick={() => submit("save")}>
           {pending ? "Saving…" : "Save"}
         </Button>
         {status === "draft" ? (
-          <Button type="button" size="lg" variant="outline" disabled={pending} onClick={() => submit("publish")}>
+          <Button type="button" size="lg" variant="outline" disabled={pending} aria-describedby={result && !result.ok ? "module-save-error" : undefined} onClick={() => submit("publish")}>
             Save and publish
           </Button>
         ) : (
-          <Button type="button" size="lg" variant="outline" disabled={pending} onClick={() => submit("unpublish")}>
+          <Button type="button" size="lg" variant="outline" disabled={pending} aria-describedby={result && !result.ok ? "module-save-error" : undefined} onClick={() => submit("unpublish")}>
             Unpublish
           </Button>
         )}
@@ -216,10 +218,23 @@ export function ModuleEditor({
         </span>
       </div>
     </div>
+    </ModuleSaveErrorContext.Provider>
   );
 }
 
 function Field({ id, label, hint, children }: { id: string; label: string; hint?: string; children: ReactNode }) {
+  const hasSaveError = useContext(ModuleSaveErrorContext);
+  const existingDescription = isValidElement<{ "aria-describedby"?: string }>(children)
+    ? children.props["aria-describedby"]
+    : undefined;
+  const describedBy = [...new Set([
+    ...(existingDescription?.split(/\s+/) ?? []),
+    ...(hint ? [`${id}-hint`] : []),
+    ...(hasSaveError ? ["module-save-error"] : []),
+  ])].join(" ");
+  const control = isValidElement<{ "aria-describedby"?: string }>(children)
+    ? cloneElement(children, { "aria-describedby": describedBy || undefined })
+    : children;
   return (
     <div className="space-y-1">
       <label htmlFor={id} className={labelClass}>
@@ -230,7 +245,7 @@ function Field({ id, label, hint, children }: { id: string; label: string; hint?
           {hint}
         </p>
       )}
-      {children}
+      {control}
     </div>
   );
 }

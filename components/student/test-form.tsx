@@ -70,7 +70,7 @@ export function TestForm({
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="mt-8 flex flex-col gap-8">
+    <form onSubmit={onSubmit} noValidate aria-describedby={error ? "test-form-error" : undefined} className="mt-8 flex flex-col gap-8">
       <ol className="flex flex-col gap-8">
         {questions.map((q, qi) => (
           <li key={q.id}>
@@ -85,7 +85,7 @@ export function TestForm({
                   <label
                     key={id}
                     htmlFor={id}
-                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2 has-checked:border-primary has-checked:bg-muted has-focus-visible:ring-3 has-focus-visible:ring-ring/50"
+                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2 has-checked:border-primary has-checked:bg-muted has-focus-visible:ring-3 has-focus-visible:ring-ring"
                   >
                     <input
                       id={id}
@@ -105,7 +105,7 @@ export function TestForm({
         ))}
       </ol>
       <div className="flex flex-col gap-3">
-        <p role="alert" className="text-sm font-medium text-destructive empty:hidden">
+        <p id="test-form-error" role="alert" className="text-sm font-medium text-destructive empty:hidden">
           {error}
         </p>
         <Button type="submit" disabled={pending} className="h-12 w-full text-base sm:w-auto sm:self-start sm:px-8">

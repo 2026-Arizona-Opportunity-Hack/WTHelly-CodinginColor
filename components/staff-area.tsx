@@ -12,7 +12,7 @@ const ROLE_LABEL: Record<StaffRole, string> = {
 };
 
 const linkClass =
-  "rounded-md px-2 py-1 text-sm font-medium outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50";
+  "rounded-md px-2 py-1 text-sm font-medium outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring";
 
 /**
  * Wraps a staff area (AUTH-5). Checks the role on the server before rendering
@@ -95,7 +95,7 @@ function HeaderShell({ children }: { children?: ReactNode }) {
       <div className="mx-auto flex min-h-14 w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2">
         <Link
           href="/"
-          className="rounded-md font-semibold tracking-tight outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-md font-semibold tracking-tight outline-none focus-visible:ring-3 focus-visible:ring-ring"
         >
           Coding in Color
         </Link>

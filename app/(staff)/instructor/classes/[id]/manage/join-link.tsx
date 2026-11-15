@@ -37,15 +37,16 @@ export function JoinLink({ code }: { code: string }) {
             id="join-link"
             readOnly
             value={link}
+            aria-describedby={result ? "join-link-message" : undefined}
             onFocus={(e) => e.currentTarget.select()}
             className={`${inputClass} max-w-xl flex-1 font-mono text-sm`}
           />
-          <Button type="button" onClick={copy} className="h-10 px-4 text-base">
+          <Button type="button" onClick={copy} aria-describedby={result ? "join-link-message" : undefined} className="h-10 px-4 text-base">
             Copy join link
           </Button>
         </div>
       </div>
-      <ActionMessage result={result} />
+      <ActionMessage result={result} id="join-link-message" />
     </div>
   );
 }

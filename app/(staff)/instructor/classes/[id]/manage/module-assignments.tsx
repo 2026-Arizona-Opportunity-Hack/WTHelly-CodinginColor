@@ -45,7 +45,7 @@ export function ModuleAssignments({
 
   return (
     <div className="space-y-4">
-      <ActionMessage result={result} ref={messageRef} />
+      <ActionMessage result={result} id="module-assignment-message" ref={messageRef} />
       <div ref={listRef}>
         <h3 className="mb-2 font-medium">Assigned, in the order students see them</h3>
         {assigned.length ? (
@@ -63,6 +63,7 @@ export function ModuleAssignments({
                     data-move={`${m.id}-up`}
                     disabled={pending || i === 0}
                     aria-label={`Move ${m.title} up`}
+                    aria-describedby={result && !result.ok ? "module-assignment-message" : undefined}
                     onClick={() => {
                       focusAfter.current = { id: m.id, dir: "up" };
                       run(() => moveModule(classId, m.id, "up"));
@@ -76,6 +77,7 @@ export function ModuleAssignments({
                     data-move={`${m.id}-down`}
                     disabled={pending || i === assigned.length - 1}
                     aria-label={`Move ${m.title} down`}
+                    aria-describedby={result && !result.ok ? "module-assignment-message" : undefined}
                     onClick={() => {
                       focusAfter.current = { id: m.id, dir: "down" };
                       run(() => moveModule(classId, m.id, "down"));
@@ -88,6 +90,7 @@ export function ModuleAssignments({
                     variant="destructive"
                     disabled={pending}
                     aria-label={`Unassign ${m.title}`}
+                    aria-describedby={result && !result.ok ? "module-assignment-message" : undefined}
                     onClick={() => run(() => unassignModule(classId, m.id), () => messageRef.current?.focus())}
                   >
                     Unassign
@@ -114,6 +117,7 @@ export function ModuleAssignments({
                   type="button"
                   disabled={pending}
                   aria-label={`Assign ${m.title}`}
+                  aria-describedby={result && !result.ok ? "module-assignment-message" : undefined}
                   onClick={() => run(() => assignModule(classId, m.id), () => messageRef.current?.focus())}
                 >
                   Assign

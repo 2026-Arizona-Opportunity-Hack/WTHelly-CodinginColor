@@ -37,9 +37,9 @@ export default function ActivityPlayerDemo() {
   const selected = activities.find((activity) => activity.id === selectedId) ?? activities[0];
 
   return (
-    <main className="min-h-screen bg-[#f3e6d4] px-4 py-8 text-[#382a26] sm:px-6">
+    <main id="main" className="min-h-screen bg-[#f3e6d4] px-4 py-8 text-[#382a26] sm:px-6">
       <div className="mx-auto mb-5 max-w-4xl rounded-2xl border border-[#d7b89f] bg-[#fffaf1] p-4 text-sm shadow-[0_3px_0_rgba(120,73,51,0.08)] sm:p-5">
-        <h1 className="font-serif text-2xl font-semibold text-[#5d2028]">Activity player preview</h1>
+        <p className="font-serif text-2xl font-semibold text-[#5d2028]">Activity player preview</p>
         <p className="mt-2 leading-6">Choose a screen to inspect. This preview does not save answers. Join a class and open /learn to test real submission.</p>
         <label htmlFor="preview-activity" className="mt-4 block font-semibold text-[#5d2028]">Preview activity</label>
         <select id="preview-activity" value={selectedId} onChange={(event) => { setSelectedId(event.target.value); setAnswers({}); }} className="mt-2 min-h-12 w-full rounded-xl border border-[#b98770] bg-[#fffdf8] px-4 text-base outline-none focus-visible:ring-2 focus-visible:ring-[#7a2932] sm:max-w-sm">

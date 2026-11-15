@@ -17,20 +17,22 @@ export type ManagedStudent = {
 /** CLS-3: list, add, remove, reset PIN. */
 export function StudentList({ classId, students }: { classId: string; students: ManagedStudent[] }) {
   const [result, setResult] = useState<ActionResult | null>(null);
+  const [errorStudentId, setErrorStudentId] = useState<string | null>(null);
   const messageRef = useRef<HTMLDivElement>(null);
 
   // After a remove, the row (and the focused button) is gone: move focus to the message.
-  function done(res: ActionResult, moveFocus: boolean) {
+  function done(res: ActionResult, moveFocus: boolean, studentId: string) {
     setResult(res);
+    setErrorStudentId(res.ok ? null : studentId);
     if (moveFocus) messageRef.current?.focus();
   }
 
   return (
     <div className="space-y-4">
       <AddStudentForm classId={classId} />
-      <ActionMessage result={result} ref={messageRef} />
+      <ActionMessage result={result} id="student-action-error" ref={messageRef} />
       <div className="overflow-x-auto rounded-xl border">
-        <table className="w-full text-left text-sm">
+        <table aria-label="Students in this class" className="w-full text-left text-sm">
           <thead className="bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               {["Name", "School", "Status", "Actions"].map((h) => (
@@ -42,7 +44,7 @@ export function StudentList({ classId, students }: { classId: string; students: 
           </thead>
           <tbody className="divide-y">
             {students.map((s) => (
-              <StudentRow key={s.id} classId={classId} student={s} onDone={done} />
+              <StudentRow key={s.id} classId={classId} student={s} hasActionError={errorStudentId === s.id} onDone={done} />
             ))}
             {!students.length && (
               <tr>
@@ -109,11 +111,13 @@ function AddStudentForm({ classId }: { classId: string }) {
 function StudentRow({
   classId,
   student,
+  hasActionError,
   onDone,
 }: {
   classId: string;
   student: ManagedStudent;
-  onDone: (res: ActionResult, moveFocus: boolean) => void;
+  hasActionError: boolean;
+  onDone: (res: ActionResult, moveFocus: boolean, studentId: string) => void;
 }) {
   const [confirming, setConfirming] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -134,7 +138,7 @@ function StudentRow({
     startTransition(async () => {
       const res = await action(classId, student.id);
       setConfirming(false);
-      onDone(res, moveFocus && res.ok);
+      onDone(res, moveFocus && res.ok, student.id);
     });
   }
 
@@ -173,6 +177,7 @@ function StudentRow({
               variant="outline"
               disabled={pending}
               aria-label={`Reset PIN for ${name}`}
+              aria-describedby={hasActionError ? "student-action-error" : undefined}
               onClick={() => run(resetPin, false)}
             >
               Reset PIN
@@ -183,6 +188,7 @@ function StudentRow({
               variant="destructive"
               disabled={pending}
               aria-label={`Remove ${name}`}
+              aria-describedby={hasActionError ? "student-action-error" : undefined}
               onClick={() => setConfirming(true)}
             >
               Remove

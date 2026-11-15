@@ -38,6 +38,7 @@ export function InstructorPicker({
             id="class-instructor"
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
+            aria-describedby={result && !result.ok ? "instructor-action-error" : undefined}
             className={`${inputClass} max-w-sm flex-1`}
           >
             {instructors.map((p) => (
@@ -51,7 +52,7 @@ export function InstructorPicker({
           </Button>
         </div>
       </form>
-      <ActionMessage result={result} />
+      <ActionMessage result={result} id="instructor-action-error" />
     </div>
   );
 }

@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "My modules · Coding in Color" };
 /** STU-1 / STU-2 / STU-5: assigned modules with status, and one Continue button. */
 export default function LearnPage() {
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+    <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
       <Suspense fallback={<h1 className="text-2xl font-semibold tracking-tight">My modules</h1>}>
         <Greeting />
       </Suspense>

@@ -7,17 +7,17 @@ import { Button } from "@/components/ui/button";
 import { createModule } from "./actions";
 
 const linkClass =
-  "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50";
+  "rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring";
 
 type Props = { searchParams: Promise<{ error?: string }> };
 
 export default function ModulesPage(props: Props) {
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-8">
+    <main id="main" className="mx-auto w-full max-w-5xl flex-1 space-y-6 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold tracking-tight">Modules</h1>
         <form action={createModule}>
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" aria-describedby="create-module-error">
             New module
           </Button>
         </form>
@@ -45,11 +45,9 @@ async function ModuleList({ searchParams }: Props) {
 
   return (
     <>
-      {createError && (
-        <p role="alert" className="text-sm font-medium text-destructive">
-          The new module couldn&apos;t be created. Try again in a moment.
-        </p>
-      )}
+      <p id="create-module-error" role="alert" className={createError ? "text-sm font-medium text-destructive" : "sr-only"}>
+        {createError ? "The new module couldn’t be created. Try again in a moment." : ""}
+      </p>
       {error ? (
         <p role="alert" className="text-sm font-medium text-destructive">
           Modules couldn&apos;t be loaded. Refresh to try again.

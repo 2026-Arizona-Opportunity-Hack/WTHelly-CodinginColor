@@ -7,7 +7,7 @@ import { CreateKeyForm } from "./create-key-form";
 import { revokeApiKey } from "./actions";
 
 export default function ApiKeysPage() {
-  return <Suspense fallback={<main className="mx-auto max-w-4xl p-6">Loading API keys…</main>}><ApiKeys /></Suspense>;
+  return <Suspense fallback={<main id="main" className="mx-auto max-w-4xl p-6">Loading API keys…</main>}><ApiKeys /></Suspense>;
 }
 
 async function ApiKeys() {
@@ -19,7 +19,7 @@ async function ApiKeys() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-8 sm:px-6">
+    <main id="main" className="mx-auto w-full max-w-4xl flex-1 space-y-6 px-4 py-8 sm:px-6">
       <div><h1 className="text-3xl font-bold tracking-tight">Read API keys</h1><p className="mt-2 text-muted-foreground">Keys allow the Coding in Color dashboard to read aggregated program progress.</p></div>
       <CreateKeyForm />
       <section aria-labelledby="existing-keys-heading" className="space-y-3">
