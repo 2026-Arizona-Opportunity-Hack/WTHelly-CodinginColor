@@ -105,6 +105,10 @@ Staff sign in at `/login` with a magic link. Only emails that already exist in S
 
 After sign-in, admins land on `/admin`, instructors on `/instructor` and reviewers on `/review`. A signed-in user without a profile, or with the wrong role for a page, gets the "no access" page with HTTP 403 (`proxy.ts` checks first, then each staff layout checks again on the server).
 
+### Digital worksheets demo
+
+After starting `npm run dev`, open [http://localhost:3000/demo/worksheets](http://localhost:3000/demo/worksheets) and try the multiple-choice, short-answer, long-answer and code-entry questions. The live answer preview shows the data received through `onChange`; answers are not saved or submitted.
+
 ## How we work (team rules)
 
 **Branches**
