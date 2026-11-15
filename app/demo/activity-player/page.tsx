@@ -20,6 +20,11 @@ const activities: PlayerActivity[] = [
     content: { type: "worksheet", questions: [{ id: "reflection", kind: "short", prompt: "Where could you use a loop?" }] },
   },
   {
+    id: "code",
+    title: "Try a Python loop",
+    content: { type: "code", prompt: "Print the numbers 1 through 5 using a loop.", starterCode: "for number in range(1, 4):\n    print(number)" },
+  },
+  {
     id: "exit",
     title: "Exit reflection",
     content: { type: "exit", kind: "short", prompt: "What is one thing you learned about loops?" },
