@@ -49,29 +49,80 @@ Judges score **Scope, Documentation, Polish and Security**, plus a separate **Ac
 
 ## What we built
 
-<!-- Two or three sentences: the problem, who it helps, what the nonprofit can do now that they couldn't before -->
+A link-based curriculum platform for Coding in Color: the platform teaches and the instructor manages. Instructors set up a class and assign modules in minutes; students (no email needed) work through modules with videos, checks, worksheets and pre/post tests; CIC sees completion and **learning gain** per student, class and cohort, and its org dashboard can read the numbers through a key-authenticated API.
+
+- Requirements with IDs and acceptance criteria: [`docs/requirements.md`](docs/requirements.md)
+- Build plan, database schema and routes: [`docs/mvp.md`](docs/mvp.md)
+- Rules for AI coding tools: [`AGENTS.md`](AGENTS.md)
 
 ## Tech stack
 
-- Frontend:
-- Backend:
-- Database:
-- APIs / services:
+- Frontend: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui
+- Backend: Next.js server components and route handlers
+- Database and auth: Supabase (Postgres, row-level security, magic-link email for staff, anonymous sign-in + class code + PIN for students)
+- APIs / services: OHack AI gateway (Socratic hints), Pyodide (Python in the browser)
+- Hosting: Vercel
 
 ## Run it locally
+
+You need **Node 22 LTS** (20.9+ works), **Git** and the **GitHub CLI** (`gh auth login`).
 
 ```bash
 git clone https://github.com/2026-Arizona-Opportunity-Hack/WTHelly-CodinginColor.git
 cd WTHelly-CodinginColor
-cp .env.example .env   # fill in your own values — never commit .env
-# install + start commands here
+npm ci
+cp .env.example .env.local   # PowerShell: Copy-Item .env.example .env.local
+npm run dev                  # http://localhost:3000
 ```
+
+Fill in `.env.local` (it is gitignored; never commit it):
+
+| Variable | Where to find it | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API Keys / Data API → Project URL | Safe in the browser |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → API Keys → anon / publishable key | Safe in the browser; RLS protects data |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API Keys → service_role / secret key | **Server only.** Bypasses all security |
+| `OPENAI_BASE_URL` | `https://ai.ohack.dev/v1` | Needed for AI hints (later) |
+| `OPENAI_API_KEY` | OHack team card | **Server only** |
+
+Teammates: get the values from a teammate by DM, never in a channel, issue or commit. Restart `npm run dev` after changing `.env.local`.
+
+Other commands: `npm run build` (production build), `npm run lint`.
+
+## How we work (team rules)
+
+**Branches**
+- Never commit to `main`. Start every task from an up-to-date `main`:
+  `git checkout main && git pull && git checkout -b cls-2-roster-import`
+- Delete your branch after its PR is merged.
+
+**Commits**
+- Commit whenever something works. The message says *why*: `Strip answers server-side so students can't read them`, not `update files`.
+- Run `git status` before `git add .`. Never commit `.env.local` or keys (the repo's hook blocks most of it).
+
+**Pull requests**
+- One change per PR: one build step or one requirement ID from `docs/requirements.md`, under 400 changed lines.
+- Title: imperative, under 72 characters, with the ID: `Add roster CSV import (CLS-2)`.
+- Description in the template order: what changed, why, how to test, screenshot for UI; end with `Closes #<issue>`.
+- One teammate looks before merging. Merge small PRs fast; everyone pulls `main` after each merge. Never force-push.
+
+**Issues**
+- One GitHub issue per task, closed by its PR. That's how judges see who did what.
+
+**Database (one shared Supabase project)**
+- Schema changes go in a **new** file in `supabase/migrations/`; post in #wthelly before pushing one.
+- Every new table needs RLS policies **and** grants ("Automatically expose new tables" is off).
+- Never auto-create profiles on sign-up: anonymous students are users too. Staff profiles come from admin invites.
+
+**AI coding tools**
+- Claude Code, Copilot and others read `AGENTS.md` and `docs/`. Point them at requirement IDs.
+- Review every change yourself before committing. To stop Claude Code from committing, pushing or merging, create `.claude/settings.local.json` with deny rules for `git commit`, `git push`, `git merge` and `gh pr merge`, and keep it out of git with `.git/info/exclude`.
 
 ## Links
 
 - Live demo:
 - Demo video:
-- Design / docs:
+- Design / docs: [`docs/requirements.md`](docs/requirements.md), [`docs/mvp.md`](docs/mvp.md)
 
 ## After the hackathon
 

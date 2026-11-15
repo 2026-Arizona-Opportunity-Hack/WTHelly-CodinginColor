@@ -20,6 +20,8 @@ venv/
 .pytest_cache/
 .mypy_cache/
 target/
+.vercel/
+*.tsbuildinfo
 
 # Editors / OS
 .vscode/
